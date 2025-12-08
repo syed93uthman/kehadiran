@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Worker {
+  id        Int     @id @default(autoincrement())
+  fullName  String
+  hourlyRate Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  attendances Attendance[]
+  payslips    Payslip[]
+  
+  @@map("workers")
+}
+
+model Attendance {
+  id        Int     @id @default(autoincrement())
+  workerId  Int
+  date      DateTime
+  status    String  // "FULL_DAY", "HALF_DAY", "DAY_OFF"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  worker    Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  
+  @@unique([workerId, date])
+  @@map("attendances")
+}
+
+model Payslip {
+  id        Int     @id @default(autoincrement())
+  workerId  Int
+  startDate DateTime
+  endDate   DateTime
+  totalHours Float
+  totalAmount Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  worker    Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  
+  @@map("payslips")
+}
