@@ -125,8 +125,8 @@ export default function WorkersTab() {
   return (
     <div className="space-y-4">
       {busyMessage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
-          <div className="flex items-center gap-2 rounded-md bg-white px-4 py-3 shadow">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <div className="flex items-center gap-2 rounded-md bg-white px-4 py-3 shadow-lg">
             <Loader2 className="h-4 w-4 animate-spin text-gray-700" />
             <span className="text-sm font-medium text-gray-800">{busyMessage}</span>
           </div>
