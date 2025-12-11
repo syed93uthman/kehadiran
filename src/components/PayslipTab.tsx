@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Download } from "lucide-react"
+import { Download, Loader2 } from "lucide-react"
 
 interface Worker {
   id: number
@@ -48,6 +48,7 @@ interface PayslipData {
 }
 
 export default function PayslipTab() {
+  const [busyMessage, setBusyMessage] = useState<string | null>(null)
   const [workers, setWorkers] = useState<Worker[]>([])
   const [selectedWorker, setSelectedWorker] = useState<string>("")
   const [startDate, setStartDate] = useState("")
@@ -63,11 +64,14 @@ export default function PayslipTab() {
 
   const fetchWorkers = async () => {
     try {
+      setBusyMessage("Loading workers…")
       const response = await fetch("/api/workers")
       const data = await response.json()
       setWorkers(data)
     } catch (error) {
       console.error("Failed to fetch workers:", error)
+    } finally {
+      setBusyMessage(null)
     }
   }
 
@@ -78,6 +82,7 @@ export default function PayslipTab() {
         return
       }
 
+      setBusyMessage("Generating payslip…")
       setLoading(true)
       const response = await fetch(
         `/api/payslip?workerId=${selectedWorker}&startDate=${startDate}&endDate=${endDate}`
@@ -88,6 +93,7 @@ export default function PayslipTab() {
       console.error("Failed to generate payslip:", error)
     } finally {
       setLoading(false)
+      setBusyMessage(null)
     }
   }
 
@@ -153,6 +159,14 @@ Note: Full Day = 1 day (8 hours), Half Day = 0.5 days (4 hours)
 
   return (
     <div className="space-y-6">
+      {busyMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <div className="flex items-center gap-2 rounded-md bg-white px-4 py-3 shadow">
+            <Loader2 className="h-4 w-4 animate-spin text-gray-700" />
+            <span className="text-sm font-medium text-gray-800">{busyMessage}</span>
+          </div>
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>Generate Payslip</CardTitle>

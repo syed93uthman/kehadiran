@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Trash2, Edit2, Plus } from "lucide-react"
+import { Trash2, Edit2, Plus, Loader2 } from "lucide-react"
 
 interface Worker {
   id: number
@@ -21,6 +21,7 @@ interface Worker {
 }
 
 export default function WorkersTab() {
+  const [busyMessage, setBusyMessage] = useState<string | null>(null)
   const [workers, setWorkers] = useState<Worker[]>([])
   const [loading, setLoading] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -36,6 +37,7 @@ export default function WorkersTab() {
 
   const fetchWorkers = async () => {
     try {
+      setBusyMessage("Loading workers…")
       setLoading(true)
       const response = await fetch("/api/workers")
       const data = await response.json()
@@ -44,6 +46,7 @@ export default function WorkersTab() {
       console.error("Failed to fetch workers:", error)
     } finally {
       setLoading(false)
+      setBusyMessage(null)
     }
   }
 
@@ -71,6 +74,7 @@ export default function WorkersTab() {
 
       if (editingId) {
         // Update
+        setBusyMessage("Updating worker…")
         const response = await fetch(`/api/workers/${editingId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -82,6 +86,7 @@ export default function WorkersTab() {
         }
       } else {
         // Create
+        setBusyMessage("Creating worker…")
         const response = await fetch("/api/workers", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -94,6 +99,8 @@ export default function WorkersTab() {
       }
     } catch (error) {
       console.error("Failed to save worker:", error)
+    } finally {
+      setBusyMessage(null)
     }
   }
 
@@ -101,6 +108,7 @@ export default function WorkersTab() {
     if (!confirm("Are you sure?")) return
 
     try {
+      setBusyMessage("Deleting worker…")
       const response = await fetch(`/api/workers/${id}`, {
         method: "DELETE",
       })
@@ -109,11 +117,21 @@ export default function WorkersTab() {
       }
     } catch (error) {
       console.error("Failed to delete worker:", error)
+    } finally {
+      setBusyMessage(null)
     }
   }
 
   return (
     <div className="space-y-4">
+      {busyMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <div className="flex items-center gap-2 rounded-md bg-white px-4 py-3 shadow">
+            <Loader2 className="h-4 w-4 animate-spin text-gray-700" />
+            <span className="text-sm font-medium text-gray-800">{busyMessage}</span>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Workers</h2>
         <Button onClick={handleAddClick}>

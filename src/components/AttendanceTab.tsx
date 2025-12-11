@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Calendar } from "lucide-react"
+import { Calendar, Loader2 } from "lucide-react"
 
 interface Worker {
   id: number
@@ -27,6 +27,7 @@ interface Attendance {
 }
 
 export default function AttendanceTab() {
+  const [busyMessage, setBusyMessage] = useState<string | null>(null)
   const [workers, setWorkers] = useState<Worker[]>([])
   const [selectedWorker, setSelectedWorker] = useState<string>("")
   const [selectedDate, setSelectedDate] = useState(
@@ -43,16 +44,20 @@ export default function AttendanceTab() {
 
   const fetchWorkers = async () => {
     try {
+      setBusyMessage("Loading workers…")
       const response = await fetch("/api/workers")
       const data = await response.json()
       setWorkers(data)
     } catch (error) {
       console.error("Failed to fetch workers:", error)
+    } finally {
+      setBusyMessage(null)
     }
   }
 
   const fetchAttendances = async () => {
     try {
+      setBusyMessage("Loading attendance…")
       setLoading(true)
       const response = await fetch("/api/attendance")
       const data = await response.json()
@@ -61,6 +66,7 @@ export default function AttendanceTab() {
       console.error("Failed to fetch attendances:", error)
     } finally {
       setLoading(false)
+      setBusyMessage(null)
     }
   }
 
@@ -71,6 +77,7 @@ export default function AttendanceTab() {
         return
       }
 
+      setBusyMessage("Saving attendance…")
       const response = await fetch("/api/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,6 +94,8 @@ export default function AttendanceTab() {
       }
     } catch (error) {
       console.error("Failed to record attendance:", error)
+    } finally {
+      setBusyMessage(null)
     }
   }
 
@@ -118,6 +127,14 @@ export default function AttendanceTab() {
 
   return (
     <div className="space-y-6">
+      {busyMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <div className="flex items-center gap-2 rounded-md bg-white px-4 py-3 shadow">
+            <Loader2 className="h-4 w-4 animate-spin text-gray-700" />
+            <span className="text-sm font-medium text-gray-800">{busyMessage}</span>
+          </div>
+        </div>
+      )}
       <Card>
         <CardContent className="pt-6">
           <h3 className="text-lg font-semibold mb-4">Record Attendance</h3>
