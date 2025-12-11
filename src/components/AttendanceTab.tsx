@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -36,6 +36,9 @@ export default function AttendanceTab() {
   const [status, setStatus] = useState("FULL_DAY")
   const [attendances, setAttendances] = useState<Attendance[]>([])
   const [loading, setLoading] = useState(false)
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    new Date().toISOString().slice(0, 7)
+  )
 
   useEffect(() => {
     fetchWorkers()
@@ -125,6 +128,30 @@ export default function AttendanceTab() {
     return worker?.fullName || "Unknown"
   }
 
+  const monthOptions = useMemo(() => {
+    const months = new Set<string>()
+    attendances.forEach((att) => {
+      if (att.date) {
+        months.add(att.date.slice(0, 7))
+      }
+    })
+    const sorted = Array.from(months).sort((a, b) => (a < b ? 1 : -1))
+    const current = new Date().toISOString().slice(0, 7)
+    if (!sorted.includes(current)) sorted.unshift(current)
+    return sorted
+  }, [attendances])
+
+  const filteredAttendances = useMemo(() => {
+    return attendances.filter((att) => {
+      if (selectedMonth === "all") return true
+      const matchesMonth = att.date?.startsWith(selectedMonth)
+      const matchesWorker = selectedWorker
+        ? att.workerId.toString() === selectedWorker
+        : true
+      return matchesMonth && matchesWorker
+    })
+  }, [attendances, selectedMonth, selectedWorker])
+
   return (
     <div className="space-y-6">
       {busyMessage && (
@@ -189,11 +216,32 @@ export default function AttendanceTab() {
 
       <div>
         <h3 className="text-lg font-semibold mb-4">Recent Attendance</h3>
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <label className="text-sm font-medium text-gray-700">
+            Filter by month
+          </label>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="Select month" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All months</SelectItem>
+              {monthOptions.map((month) => (
+                <SelectItem key={month} value={month}>
+                  {new Date(month + "-01").toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         {loading ? (
           <div className="text-center py-8">Loading...</div>
         ) : (
           <div className="space-y-2 max-h-96 overflow-y-auto">
-            {attendances.slice(0, 20).map((attendance) => (
+            {filteredAttendances.slice(0, 20).map((attendance) => (
               <Card key={attendance.id}>
                 <CardContent className="pt-4">
                   <div className="flex justify-between items-center">
