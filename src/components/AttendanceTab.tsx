@@ -206,7 +206,7 @@ export default function AttendanceTab() {
             </div>
 
             <div className="flex items-end">
-              <Button onClick={handleSubmit} className="w-full">
+              <Button onClick={handleSubmit} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
                 Record
               </Button>
             </div>

@@ -134,7 +134,7 @@ export default function WorkersTab() {
       )}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Workers</h2>
-        <Button onClick={handleAddClick}>
+        <Button onClick={handleAddClick} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
           <Plus className="w-4 h-4 mr-2" />
           Add Worker
         </Button>
@@ -159,6 +159,7 @@ export default function WorkersTab() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleEditClick(worker)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
                     >
                       <Edit2 className="w-4 h-4" />
                     </Button>
@@ -166,6 +167,7 @@ export default function WorkersTab() {
                       variant="destructive"
                       size="sm"
                       onClick={() => handleDelete(worker.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -219,7 +221,7 @@ export default function WorkersTab() {
             >
               Cancel
             </Button>
-            <Button onClick={handleSubmit}>
+            <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
               {editingId ? "Update" : "Add"}
             </Button>
           </DialogFooter>

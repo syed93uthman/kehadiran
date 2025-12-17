@@ -211,7 +211,7 @@ Note: Full Day = 1 day (8 hours), Half Day = 0.5 days (4 hours)
               <Button
                 onClick={handleGeneratePayslip}
                 disabled={loading}
-                className="w-full"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
               >
                 {loading ? "Generating..." : "Generate"}
               </Button>
