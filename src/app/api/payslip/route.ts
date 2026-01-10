@@ -62,6 +62,8 @@ export async function GET(request: NextRequest) {
       endDate: end,
       totalDays,
       totalWorkDays: attendances.filter((att: typeof attendances[0]) => att.status !== "DAY_OFF").length,
+      totalFullDays: attendances.filter((att: typeof attendances[0]) => att.status === "FULL_DAY").length,
+      totalHalfDays: attendances.filter((att: typeof attendances[0]) => att.status === "HALF_DAY").length,
       dayOffCount: attendances.filter((att: typeof attendances[0]) => att.status === "DAY_OFF").length,
       totalHours,
       totalAmount,

@@ -41,6 +41,8 @@ interface PayslipData {
   endDate: string
   totalDays: number
   totalWorkDays: number
+  totalFullDays: number
+  totalHalfDays: number
   dayOffCount: number
   totalHours: number
   totalAmount: number
@@ -129,6 +131,8 @@ Total Hours: ${payslip.totalHours.toFixed(1)} hours (1 day = 8 hours)
 Total Amount: RM${payslip.totalAmount.toFixed(2)}
 
 Work Entries: ${payslip.totalWorkDays}
+Full Days: ${payslip.totalFullDays}
+Half Days: ${payslip.totalHalfDays}
 Days Off: ${payslip.dayOffCount}
 
 Note: Full Day = 1 day (8 hours), Half Day = 0.5 days (4 hours)
@@ -263,8 +267,12 @@ Note: Full Day = 1 day (8 hours), Half Day = 0.5 days (4 hours)
                     <p className="font-semibold">{payslip.totalHours.toFixed(1)} hrs</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Work Entries</p>
-                    <p className="font-semibold">{payslip.totalWorkDays}</p>
+                    <p className="text-sm text-gray-600">Full Day</p>
+                    <p className="font-semibold">{payslip.totalFullDays}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Half Day</p>
+                    <p className="font-semibold">{payslip.totalHalfDays}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Days Off</p>
@@ -387,6 +395,14 @@ Note: Full Day = 1 day (8 hours), Half Day = 0.5 days (4 hours)
                   <p className="text-gray-600">Total Days Worked</p>
                   <p className="font-semibold">
                     {selectedPayslip.totalDays.toFixed(1)} days
+                  </p>
+                  <p className="text-gray-600">Full Days</p>
+                  <p className="font-semibold">
+                    {selectedPayslip.totalFullDays} days
+                  </p>
+                  <p className="text-gray-600">Half Days</p>
+                  <p className="font-semibold">
+                    {selectedPayslip.totalHalfDays} days
                   </p>
                 </div>
                 <div>
